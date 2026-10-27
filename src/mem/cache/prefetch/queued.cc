@@ -66,6 +66,9 @@ Queued::DeferredPacket::createPkt(Addr paddr, unsigned blk_size,
     if (pfInfo.isSecure()) {
         req->setFlags(Request::SECURE);
     }
+    // Mark the request as a prefetch so lower caches, which receive it as
+    // a plain read after it misses here, can still tell it is a prefetch
+    req->setFlags(Request::PREFETCH);
     req->taskId(context_switch_task_id::Prefetcher);
     pkt = new Packet(req, MemCmd::HardPFReq);
     pkt->allocate();
