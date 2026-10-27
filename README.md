@@ -18,6 +18,7 @@ on SPEC CPU2017.
 | `configs/pacipv/pacipv_se.py` | Paper's system (O3 core, 32K/48K L1, 1.25M L2, 3M LLC); LLC policy, IPV and prefetcher options |
 | `configs/pacipv/summarize.py` | IPC, speedup, L1I MPKI/latency, LLC demand/prefetch MPKI, geomean |
 | `configs/common/cpu2017.py`, `se.py` | SPEC CPU2017 workloads for SE mode (setup) |
+| `util/dockerfiles/pacipv/Dockerfile` | Build environment: gem5's Ubuntu 24.04 image + x86-64 libraries for SPEC |
 
 ## Build and run
 
@@ -26,14 +27,17 @@ on SPEC CPU2017.
     git clone -b pacipv https://github.com/DivyamCS/gem5-pacipv.git gem5
     cd gem5
 
-**2. Environment.** gem5 builds on Linux. We used Docker on an Apple M4 Mac.
-Mount the repo at `/gem5`, because `cpu2017.py` uses absolute `/gem5/...`
-paths:
+**2. Environment.** gem5 builds on Linux. Build the Docker image once
+(gem5's Ubuntu 24.04 image + x86-64 libraries for SPEC):
 
-    docker run -it -v $PWD:/gem5 -w /gem5 ghcr.io/gem5/ubuntu-24.04_all-dependencies:latest
+    docker build -t pacipv-gem5 util/dockerfiles/pacipv
 
-Any Ubuntu 22.04/24.04 machine with gem5's dependencies also works if the
-repo is at `/gem5`.
+Start it from inside the `gem5` folder. The repo must be mounted at `/gem5`,
+because `cpu2017.py` uses absolute `/gem5/...` paths:
+
+    docker run -it -v $PWD:/gem5 -w /gem5 pacipv-gem5
+
+Tested on an Apple M4 Mac with Docker. Native macOS is not tested.
 
 **3. Build** (inside the container):
 
@@ -44,9 +48,6 @@ inputs at:
 
     /gem5/spec/cpu2017/cpu2017/binaries/<benchmark>
     /gem5/spec/cpu2017/cpu2017/data/<benchmark>/{ref,all}/input/
-
-The binaries are dynamically linked x86-64. On an ARM host the x86-64 loader
-and libraries must also be available to gem5 (e.g. with `--redirects`).
 
 **5. Run** (200M instructions fast-forward, 50M measured):
 
