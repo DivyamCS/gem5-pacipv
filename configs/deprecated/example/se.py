@@ -67,7 +67,7 @@ from common import (
     Simulation,
 )
 from common.Caches import *
-from common.cpu2000 import *
+from common.cpu2017 import *
 from common.FileSystemConfig import config_filesystem
 from ruby import Ruby
 
@@ -159,7 +159,7 @@ if args.bench:
                 # TARGET_ISA has been removed, but this is missing a ], so it
                 # has incorrect syntax and wasn't being used anyway.
                 exec(
-                    "workload = %s(buildEnv['TARGET_ISA', 'linux', '%s')"
+                    "workload = %s('x86', 'linux', '%s')"
                     % (app, args.spec_input)
                 )
             multiprocesses.append(workload.makeProcess())
