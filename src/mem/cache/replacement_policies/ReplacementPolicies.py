@@ -175,3 +175,18 @@ class WeightedLRURP(LRURP):
     type = "WeightedLRURP"
     cxx_class = "gem5::replacement_policy::WeightedLRU"
     cxx_header = "mem/cache/replacement_policies/weighted_lru_rp.hh"
+
+class PACIPVRP(BaseReplacementPolicy):
+    type = "PACIPVRP"
+    cxx_class = "gem5::replacement_policy::PACIPV"
+    cxx_header = "mem/cache/replacement_policies/pacipv_rp.hh"
+    num_bits = Param.Int(2, "Number of bits per RRPV")
+    demand_ipv = VectorParam.Unsigned(
+        [0, 0, 0, 0, 2],
+        "Demand IPV: new RRPV after a demand hit at RRPV 0..3, followed by "
+        "the insertion RRPV for demand fills",
+    )
+    prefetch_ipv = VectorParam.Unsigned(
+        [0, 0, 0, 0, 2],
+        "Prefetch IPV: same layout as demand_ipv, used for prefetches",
+    )
